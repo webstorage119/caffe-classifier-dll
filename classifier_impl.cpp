@@ -104,8 +104,7 @@ std::vector<Prediction> ClassifierImpl::Classify(const std::vector<cv::Mat>& img
   for (size_t i = 0; i < output.size(); ++i) {
     std::vector<int> maxN = Argmax(output[i], N);
     Prediction predictions;
-    for (int i = 0; i < N; ++i) {
-      int idx = maxN[i];
+    for (auto& idx: maxN) {
       predictions.push_back(std::make_pair(idx, output[i][idx]));
     }
     result.push_back(std::move(predictions));
@@ -128,6 +127,6 @@ void ClassifierImpl::WrapInputLayer(int n, std::vector<cv::Mat>* input_channels)
 void ClassifierImpl::Preprocess(const cv::Mat& img, std::vector<cv::Mat>* input_channels) {
   cv::Mat sample;
   cv::resize(img, sample, input_geometry_);
-  img.convertTo(sample, CV_32FC(num_channels_), scale_, - mean_ * scale_);
+  sample.convertTo(sample, CV_32FC(num_channels_), scale_, - mean_ * scale_);
   cv::split(sample, *input_channels);
 }
